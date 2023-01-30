@@ -47,7 +47,7 @@ def main():
     week_day = date('%w')
 
     # Login to timetable url
-    driver.get(f'https://kundalik.com/user/calendar.aspx?year={year}&month={month}&day=28')  # {day}
+    driver.get(f'https://kundalik.com/user/calendar.aspx?year={year}&month={month}&day={day}')
 
     # Find lesson schedule for today
     schedule_elements = driver.find_elements(By.XPATH, "//p[@class='s2 strong']")
