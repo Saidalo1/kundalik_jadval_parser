@@ -1,5 +1,4 @@
-from sqlalchemy import Column, String, Integer
-from sqlalchemy import create_engine
+from sqlalchemy import Column, String, Integer, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -12,10 +11,18 @@ base = declarative_base()
 
 
 class Schedule(base):
-    __tablename__ = 'Schedule'
+    __tablename__ = 'schedule'
 
     id = Column("schedule_weekday_id", Integer, primary_key=True)
     name = Column(String)
+    weekday = Column(Integer)
+
+
+class ErrorSchedule(base):
+    __tablename__ = 'error_schedule'
+
+    id = Column("error_schedule_id", Integer, primary_key=True)
+    error_text = Column(String)
     weekday = Column(Integer)
 
 

@@ -1,73 +1,46 @@
 import logging
-import os
+# import time
 
-from dotenv import load_dotenv
-from selenium import webdriver
-from selenium.webdriver.common.by import By
+from aiogram import Bot, Dispatcher, types
+from aiogram.utils import executor
 
-from functions import date
-from models import session, Schedule
+from config import TOKEN, week_day
 
-load_dotenv('.env')
-LOGIN = os.environ.get('LOGIN')
-PASSWORD = os.environ.get('PASSWORD')
+from models import session, Schedule, ErrorSchedule
 
 logging.basicConfig(level=logging.INFO)
 
-
-def main():
-    # Open Chrome browser
-    driver = webdriver.Chrome()
-
-    # To maximize the browser window
-    driver.maximize_window()
-
-    # Get URL of website
-    driver.get("https://login.kundalik.com/login")
-
-    # Find login input field
-    login = driver.find_element(By.NAME, "login")
-
-    # Write username to login field
-    login.send_keys(f'{LOGIN}')
-
-    # Find password input field
-    password = driver.find_element(By.NAME, "password")
-
-    # Write password to password field
-    password.send_keys(f'{PASSWORD}')
-
-    # Click submit
-    password.submit()
-
-    # Save today's date to mutable objects
-    year = date('%Y')
-    month = date('%m')
-    day = date('%d')
-    week_day = date('%w')
-
-    # Login to timetable url
-    driver.get(f'https://kundalik.com/user/calendar.aspx?year={year}&month={month}&day={day}')
-
-    # Find lesson schedule for today
-    schedule_elements = driver.find_elements(By.XPATH, "//p[@class='s2 strong']")
-
-    # To list
-    schedule_list = (subject.text for subject in schedule_elements)
-
-    # Delete old data
-    old_data = session.query(Schedule).filter(Schedule.weekday == week_day).delete()
-
-    # Create new data
-    for subject in schedule_list:
-        schedule = Schedule(name=subject, weekday=week_day)
-        session.add(schedule)
-        session.commit()
-
-    # to close the browser
-    driver.close()
+bot = Bot(token=TOKEN)
+dp = Dispatcher(bot)
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    main()
+@dp.message_handler(commands=['start'])
+async def start(message: types.Message):
+    message_text = f"{message.from_user.first_name}, xush kelibsiz! \n Dars jadvalini bilish uchun /dars_jadvali " \
+                   f"komandasiga murojaat qiling"
+    return await message.answer(message_text)
+
+
+@dp.message_handler(commands=['dars_jadvali'])
+async def main(message: types.Message):
+    # start_time = time.time()
+    schedule_elements_query = session.query(Schedule).filter(Schedule.weekday == week_day)
+    schedule_list = [subject.name for subject in schedule_elements_query]
+    message_text = ""
+    if len(schedule_list) > 0:
+        for subject in schedule_list:
+            message_text += f'\n{subject}'
+    else:
+        errors = session.query(ErrorSchedule).filter(ErrorSchedule.weekday == week_day)
+        errors_list = [error.error_text for error in errors]
+        if len(errors_list) > 0:
+            for error in errors_list:
+                message_text += f'\n{error}'
+        else:
+            message_text += 'Dars jadvali topilmadi'
+    # print("--- %s seconds ---" % (time.time() - start_time))
+    return await message.answer(message_text)
+
+
+if __name__ == "__main__":
+    executor.start_polling(dp, skip_updates=True)
