@@ -6,7 +6,7 @@ This is a script to get schedule from kundalik.com, save to PostgreSQL database 
 
 ## Installation for Linux & MacOS
 
-Google Chrome
+Google Chrome (required)
 
 ```bash
   sudo apt update
