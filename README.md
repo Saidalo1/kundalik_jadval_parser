@@ -21,10 +21,10 @@ Required libraries for the project
 
 ## Installation for Windows
 
-Google Chrome
+Google Chrome (required)
 
 ```bash
-    https://www.google.ru/intl/ru/chrome/
+  https://www.google.com/intl/en/chrome/
 ```
 
 Required libraries for the project
@@ -38,8 +38,8 @@ To import data create an .env file and write this data
 
 ```bash
   # Kundalik settings
-    LOGIN=kundalikcomlogin
-    PASSWORD=kundalikcompassword
+    LOGIN=kundalikcomloginFORPUPILACCOUNT
+    PASSWORD=kundalikcompasswordFORPUPILACCOUNT
 
     # Database settings
     DATABASE_NAME=DATABASE_NAME
