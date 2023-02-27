@@ -50,6 +50,9 @@ To import data create an .env file and write this data
     # Telegram bot token
     TOKEN=TELEGRAMBOTTOKEN
 ```
+## Script.py to crontab
+Add script.py to crontab for update database every N time!
+
 ## How to Run for Linux & MacOS
 
 ```bash
